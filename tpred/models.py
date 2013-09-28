@@ -24,6 +24,12 @@ post_mention_map = sqla.Table(
     sqla.Column('sn_id', sqla.BigInteger, sqla.ForeignKey('sn.id'))
 )
 
+post_moment_map = sqla.Table(
+    'post_moment_map', db.Base.metadata,
+    sqla.Column('post_id', sqla.BigInteger, sqla.ForeignKey('post.id')),
+    sqla.Column('moment_id', sqla.BigInteger, sqla.ForeignKey('post_moment.id'))
+)
+
 
 class SnModel(db.Base):
     __tablename__ = "sn"
@@ -76,6 +82,14 @@ class HashtagModel(db.Base):
     hashtag = sqla.Column(sqla.String, nullable=False)
 
 
+class PostMomentModel(db.Base):
+    __tablename__ = "post_moment"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    ts = sqla.Column(sqla.DateTime, nullable=False, server_default=sqla.func.now())
+    points = sqla.Column(sqla.Integer, nullable=False)
+
+
 class PostModel(db.Base):
     __tablename__ = "post"
 
@@ -90,3 +104,4 @@ class PostModel(db.Base):
     rel_mentions = orm.relationship(SnModel, secondary=post_mention_map)
     rel_hashtags = orm.relationship(HashtagModel, secondary=post_hashtag_map)
     rel_urls = orm.relationship(UrlModel, secondary=post_url_map)
+    rel_moments = orm.relationship(PostMomentModel, secondary=post_moment_map)

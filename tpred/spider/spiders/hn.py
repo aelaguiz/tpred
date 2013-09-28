@@ -55,10 +55,8 @@ class HnSpider(spider.BaseSpider):
                 sn=sn,
                 url=content_link)
 
-        #if num < 10:
-            #more_link = links[-1]
-            #more_url = util.get_url_from_node(response, more_link.select('./@href'))
+        if num < 10:
+            more_link = links[-1]
+            more_url = util.get_url_from_node(response, more_link.select('./@href'))
 
-            #print more_url
-
-            #yield http.Request(more_url, meta={'type': 'page', 'num': num + 1})
+            yield http.Request(more_url, meta={'type': 'page', 'num': num + 1})

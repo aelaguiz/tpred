@@ -12,7 +12,8 @@ def get_sn(site_id, sn_str, **kwargs):
         db.session.add(m)
 
         return m
-    except:
+    except Exception as e:
+        print "Exception", e
         args = {
             'sn': sn_str,
             'site_id': site_id
