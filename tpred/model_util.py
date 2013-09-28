@@ -2,11 +2,25 @@ import db
 import models
 
 
-def get_sn(sn_str):
+def get_sn(sn_str, **kwargs):
     try:
-        return db.session.query(models.SnModel).filter_by(sn=sn_str).one()
+        m = db.session.query(models.SnModel).filter_by(sn=sn_str).one()
+
+        for k, v in kwargs.iteritems():
+            setattr(m, k, v)
+
+        db.session.add(m)
+
+        return m
     except:
-        m = models.SnModel(sn=sn_str)
+        args = {
+            'sn': sn_str,
+        }
+
+        args.update(kwargs)
+
+        m = models.SnModel(**args)
+
         db.session.add(m)
 
         return m
