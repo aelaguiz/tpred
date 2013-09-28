@@ -2,9 +2,9 @@ import db
 import models
 
 
-def get_sn(sn_str, **kwargs):
+def get_sn(site_id, sn_str, **kwargs):
     try:
-        m = db.session.query(models.SnModel).filter_by(sn=sn_str).one()
+        m = db.session.query(models.SnModel).filter_by(site_id=site_id, sn=sn_str).one()
 
         for k, v in kwargs.iteritems():
             setattr(m, k, v)
@@ -15,6 +15,7 @@ def get_sn(sn_str, **kwargs):
     except:
         args = {
             'sn': sn_str,
+            'site_id': site_id
         }
 
         args.update(kwargs)
@@ -59,14 +60,16 @@ def get_hashtag(hashtag_str):
         return m
 
 
-def get_post(text, created_at, site_post_id, sn):
+def get_post(site_id, text, created_at, site_post_id, sn):
     try:
-        return db.session.query(models.PostModel).filter_by(site_post_id=site_post_id).one()
-    except:
+        return db.session.query(models.PostModel).filter_by(site_id=site_id, site_post_id=site_post_id).one()
+    except Exception as e:
+        print "Exception", e
         body = get_post_body(text)
 
         m = models.PostModel(
             sn_id=sn.id,
+            site_id=site_id,
             site_post_id=site_post_id,
             created_at=created_at)
         m.rel_body = body
@@ -78,7 +81,8 @@ def get_post(text, created_at, site_post_id, sn):
 def get_post_body(text):
     try:
         return db.session.query(models.PostBodyModel).filter_by(body=text).one()
-    except:
+    except Exception as e:
+        print "Exception", e
         m = models.PostBodyModel(
             body=text)
         db.session.add(m)
