@@ -59,15 +59,28 @@ def get_hashtag(hashtag_str):
         return m
 
 
-def get_tweet(text, created_at, twitter_id, sn):
+def get_post(text, created_at, site_post_id, sn):
     try:
-        return db.session.query(models.TweetModel).filter_by(twitter_id=twitter_id).one()
+        return db.session.query(models.PostModel).filter_by(site_post_id=site_post_id).one()
     except:
-        m = models.TweetModel(
+        body = get_post_body(text)
+
+        m = models.PostModel(
             sn_id=sn.id,
-            twitter_id=twitter_id,
-            created_at=created_at,
-            text=text)
+            site_post_id=site_post_id,
+            created_at=created_at)
+        m.rel_body = body
+        db.session.add(m)
+
+        return m
+
+
+def get_post_body(text):
+    try:
+        return db.session.query(models.PostBodyModel).filter_by(body=text).one()
+    except:
+        m = models.PostBodyModel(
+            body=text)
         db.session.add(m)
 
         return m

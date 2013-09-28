@@ -13,7 +13,7 @@ for sn in db.session.query(models.SnModel).all():
 
     for tweet in statuses:
         sn = model_util.get_sn(tweet.user.screen_name)
-        twm = model_util.get_tweet(tweet.text, tweet.created_at, tweet.id, sn)
+        twm = model_util.get_post(tweet.text, tweet.created_at, tweet.id, sn)
 
         for mention in tweet.user_mentions:
             msn = model_util.get_sn(mention.screen_name)

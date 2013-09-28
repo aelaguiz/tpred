@@ -54,6 +54,13 @@ class SnModel(db.Base):
         return False
 
 
+class PostBodyModel(db.Base):
+    __tablename__ = "post_body"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    body = sqla.Column(sqla.String, nullable=False)
+
+
 class UrlModel(db.Base):
     __tablename__ = "url"
 
@@ -75,8 +82,9 @@ class PostModel(db.Base):
     sn_id = sqla.Column(sqla.BigInteger, sqla.ForeignKey(SnModel.id), nullable=False)
     site_post_id = sqla.Column(sqla.BigInteger, nullable=False)
     created_at = sqla.Column(sqla.DateTime, nullable=False)
-    text = sqla.Column(sqla.String, nullable=False)
+    body_id = sqla.Column(sqla.BigInteger, sqla.ForeignKey(PostBodyModel.id), nullable=False)
 
+    rel_body = orm.relationship(PostBodyModel)
     rel_mentions = orm.relationship(SnModel, secondary=post_mention_map)
     rel_hashtags = orm.relationship(HashtagModel, secondary=post_hashtag_map)
     rel_urls = orm.relationship(UrlModel, secondary=post_url_map)
