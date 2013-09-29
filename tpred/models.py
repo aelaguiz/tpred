@@ -30,10 +30,16 @@ post_moment_map = sqla.Table(
     sqla.Column('moment_id', sqla.BigInteger, sqla.ForeignKey('post_moment.id'))
 )
 
-post_topic_map = sqla.Table(
-    'post_topic_map', db.Base.metadata,
-    sqla.Column('post_id', sqla.BigInteger, sqla.ForeignKey('post.id')),
+body_topic_map = sqla.Table(
+    'body_topic_map', db.Base.metadata,
+    sqla.Column('body_id', sqla.BigInteger, sqla.ForeignKey('post_body.id')),
     sqla.Column('topic_id', sqla.BigInteger, sqla.ForeignKey('topic.id'))
+)
+
+topic_moment_map = sqla.Table(
+    'topic_moment_map', db.Base.metadata,
+    sqla.Column('topic_id', sqla.BigInteger, sqla.ForeignKey('topic.id')),
+    sqla.Column('topic_moment_id', sqla.BigInteger, sqla.ForeignKey('topic_moment.id'))
 )
 
 
@@ -49,6 +55,7 @@ class SnModel(db.Base):
     num_favorites = sqla.Column(sqla.Integer)
     num_posts = sqla.Column(sqla.Integer)
     verified = sqla.Column(sqla.Boolean)
+    deleted = sqla.Column(sqla.Boolean, default=False)
     last_check = sqla.Column(sqla.DateTime)
 
     @property
@@ -68,13 +75,6 @@ class SnModel(db.Base):
         return False
 
 
-class PostBodyModel(db.Base):
-    __tablename__ = "post_body"
-
-    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
-    body = sqla.Column(sqla.String, nullable=False)
-
-
 class UrlModel(db.Base):
     __tablename__ = "url"
 
@@ -89,11 +89,31 @@ class HashtagModel(db.Base):
     hashtag = sqla.Column(sqla.String, nullable=False)
 
 
+class TopicMomentModel(db.Base):
+    __tablename__ = "topic_moment"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    moment = sqla.Column(sqla.BigInteger, nullable=False)
+    value = sqla.Column(sqla.BigInteger, nullable=False)
+
+
 class TopicModel(db.Base):
     __tablename__ = "topic"
 
     id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
     topic = sqla.Column(sqla.String, nullable=False)
+
+    rel_moments = orm.relationship(TopicMomentModel, secondary=topic_moment_map)
+    rel_moments_dyn = orm.relationship(TopicMomentModel, secondary=topic_moment_map, lazy="dynamic")
+
+
+class PostBodyModel(db.Base):
+    __tablename__ = "post_body"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    body = sqla.Column(sqla.String, nullable=False)
+
+    rel_topics = orm.relationship(TopicModel, secondary=body_topic_map)
 
 
 class PostMomentModel(db.Base):
@@ -113,10 +133,10 @@ class PostModel(db.Base):
     site_post_id = sqla.Column(sqla.BigInteger, nullable=False)
     created_at = sqla.Column(sqla.DateTime, nullable=False)
     body_id = sqla.Column(sqla.BigInteger, sqla.ForeignKey(PostBodyModel.id), nullable=False)
+    repost = sqla.Column(sqla.Boolean, nullable=False, default=False)
 
     rel_body = orm.relationship(PostBodyModel)
     rel_mentions = orm.relationship(SnModel, secondary=post_mention_map)
     rel_hashtags = orm.relationship(HashtagModel, secondary=post_hashtag_map)
     rel_urls = orm.relationship(UrlModel, secondary=post_url_map)
     rel_moments = orm.relationship(PostMomentModel, secondary=post_moment_map)
-    rel_topics = orm.relationship(TopicModel, secondary=post_topic_map)

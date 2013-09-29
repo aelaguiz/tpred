@@ -71,11 +71,14 @@ def load_tg():
     f.close()
 
 
-bg = list(load_bg())
-tg = list(load_tg())
+bg = []
+tg = []
+sw2 = []
+#bg = list(load_bg())
+#tg = list(load_tg())
 
 
-sw2 = list(load_words())
+#sw2 = list(load_words())
 
 
 def sentences(blob):

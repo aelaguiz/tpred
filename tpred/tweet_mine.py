@@ -3,6 +3,7 @@ import db
 import models
 import model_util
 import dateutil.parser
+import topic_util
 import pprint
 import sites
 
@@ -25,10 +26,13 @@ for tweet in it:
 
     if 'text' not in tweet:
         pprint.pprint(tweet)
+        continue
 
     text = tweet['text']
-    #if 'retweeted_status' in tweet:
-        #text = tweet['retweeted_status']['text']
+    retweet = False
+    if 'retweeted_status' in tweet:
+        text = tweet['retweeted_status']['text']
+        retweet = True
 
     user = tweet['user']
 
@@ -45,6 +49,8 @@ for tweet in it:
     created_at = dateutil.parser.parse(tweet['created_at'])
 
     twm = model_util.get_post(sites.TWITTER, text, created_at, tweet['id'], sn)
+    if retweet:
+        twm.repost = True
 
     if 'user_mentions' in tweet['entities']:
         for mention in tweet['entities']['user_mentions']:
@@ -65,6 +71,7 @@ for tweet in it:
             twm.rel_urls.append(urlm)
 
     #print sn.sn, text
-    print sn.sn, twm.rel_body.body
+    #print sn.sn, twm.rel_body.body
+    topic_util.update_topics(twm.rel_body)
 
     db.session.commit()

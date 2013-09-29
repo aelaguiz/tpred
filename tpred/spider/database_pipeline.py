@@ -11,10 +11,12 @@ class DatabasePipeline(object):
     def process_item(self, item, spider):
         sn = model_util.get_sn(item['site_id'], item['sn'])  # NOQA
         post = model_util.get_post(item['site_id'], item['body'], datetime.datetime.now(), item['site_post_id'], sn)  # NOQA
+        url = model_util.get_url(item['url'])
 
         moment = models.PostMomentModel(points=item['points'])
 
         post.rel_moments.append(moment)
+        post.rel_urls.append(url)
 
         db.session.add(moment)
         db.session.add(post)
