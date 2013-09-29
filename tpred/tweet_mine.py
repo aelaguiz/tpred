@@ -1,6 +1,8 @@
 import t
 import db
 import models
+import model_util
+import dateutil.parser
 import pprint
 import sites
 
@@ -13,4 +15,56 @@ ids = [str(twid[0]) for twid in res]
 it = t.stream.statuses.filter(follow=",".join(ids))
 
 for tweet in it:
-    pprint.pprint(tweet)
+    #print "-----------------"
+    #print ""
+    #print ""
+    #pprint.pprint(tweet)
+
+    if 'delete' in tweet:
+        continue
+
+    if 'text' not in tweet:
+        pprint.pprint(tweet)
+
+    text = tweet['text']
+    #if 'retweeted_status' in tweet:
+        #text = tweet['retweeted_status']['text']
+
+    user = tweet['user']
+
+    sn = model_util.get_sn(
+        sites.TWITTER,
+        user['screen_name'],
+        site_sn_id=user['id'],
+        num_followers=user['followers_count'],
+        num_posts=user['statuses_count'],
+        num_friends=user['friends_count'],
+        num_favorites=user['favourites_count'],
+        verified=user['verified'])
+
+    created_at = dateutil.parser.parse(tweet['created_at'])
+
+    twm = model_util.get_post(sites.TWITTER, text, created_at, tweet['id'], sn)
+
+    if 'user_mentions' in tweet['entities']:
+        for mention in tweet['entities']['user_mentions']:
+            msn = model_util.get_sn(sites.TWITTER, mention['screen_name'])
+
+            twm.rel_mentions.append(msn)
+
+    if 'hashtags' in tweet['entities']:
+        for hashtag in tweet['entities']['hashtags']:
+            ht = model_util.get_hashtag(hashtag['text'])
+
+            twm.rel_hashtags.append(ht)
+
+    if 'urls' in tweet['entities']:
+        for url in tweet['entities']['urls']:
+            urlm = model_util.get_url(url['expanded_url'])
+
+            twm.rel_urls.append(urlm)
+
+    #print sn.sn, text
+    print sn.sn, twm.rel_body.body
+
+    db.session.commit()
