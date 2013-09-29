@@ -43,6 +43,7 @@ class SnModel(db.Base):
     id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
     site_id = sqla.Column(sqla.BigInteger, nullable=False)
     sn = sqla.Column(sqla.String, nullable=False)
+    site_sn_id = sqla.Column(sqla.BigInteger)
     num_followers = sqla.Column(sqla.Integer)
     num_friends = sqla.Column(sqla.Integer)
     num_favorites = sqla.Column(sqla.Integer)

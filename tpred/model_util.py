@@ -12,8 +12,8 @@ def get_sn(site_id, sn_str, **kwargs):
         db.session.add(m)
 
         return m
-    except Exception as e:
-        print "Exception", e
+    except Exception as e:  # NOQA
+        #print "Getting sn exception", site_id, sn_str, e
         args = {
             'sn': sn_str,
             'site_id': site_id
@@ -64,8 +64,8 @@ def get_hashtag(hashtag_str):
 def get_post(site_id, text, created_at, site_post_id, sn):
     try:
         return db.session.query(models.PostModel).filter_by(site_id=site_id, site_post_id=site_post_id).one()
-    except Exception as e:
-        print "Exception", e
+    except Exception as e:  # NOQA
+        #print "Exception", e
         body = get_post_body(text)
 
         m = models.PostModel(
@@ -82,8 +82,8 @@ def get_post(site_id, text, created_at, site_post_id, sn):
 def get_post_body(text):
     try:
         return db.session.query(models.PostBodyModel).filter_by(body=text).one()
-    except Exception as e:
-        print "Exception", e
+    except Exception as e:  # NOQA
+        #print "Exception", e
         m = models.PostBodyModel(
             body=text)
         db.session.add(m)
