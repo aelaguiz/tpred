@@ -71,14 +71,12 @@ def load_tg():
     f.close()
 
 
-bg = []
-tg = []
-sw2 = []
-#bg = list(load_bg())
-#tg = list(load_tg())
-
-
-#sw2 = list(load_words())
+#bg = []
+#tg = []
+#sw2 = []
+bg = list(load_bg())
+tg = list(load_tg())
+sw2 = list(load_words())
 
 
 def sentences(blob):
@@ -105,6 +103,8 @@ def is_number(s):
 
 
 def prep(blob):
+    blob = blob.lower()
+
     tokens = tokenizer.tokenize(blob)
 
     words = [x for x in tokens if len(x) > 1]
@@ -112,10 +112,13 @@ def prep(blob):
     num_words = len(words)
 
     for i, word in enumerate(words):
+        lemma = lmtzr.lemmatize(word)
+
         if num_words > 1000:
             if i % 100 == 0:
                 print i, "of", num_words
-        if word not in sw and not is_number(word) and word_re.match(word):
+
+        if word not in sw and lemma not in sw2 and not is_number(word) and word_re.match(word):
             yield word
 
 
@@ -163,7 +166,7 @@ def get_pos_subject(pos_list):
 
 
 def bigrams(words, max_bigrams=100):
-    print "Extracting bigrams"
+    #print "Extracting bigrams"
     bigram_finder = BigramCollocationFinder.from_words(words)
 
     for bigram, score in bigram_finder.score_ngrams(bigram_measures.raw_freq)[:max_bigrams]:
@@ -175,7 +178,7 @@ def bigrams(words, max_bigrams=100):
 
 
 def trigrams(words, max_trigrams=100):
-    print "Extracting trigrams"
+    #print "Extracting trigrams"
     trigram_finder = TrigramCollocationFinder.from_words(words)
 
     for trigram, score in trigram_finder.score_ngrams(trigram_measures.raw_freq)[:max_trigrams]:

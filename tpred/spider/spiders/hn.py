@@ -5,6 +5,7 @@ import tpred.spider.util as util
 import tpred.sites as sites
 import tpred.spider.items as items
 import re
+import tpred.model_util as model_util
 
 
 points_re = re.compile("(\d+) points?")
@@ -16,7 +17,10 @@ class HnSpider(spider.BaseSpider):
     allowed_domains = ["news.ycombinator.com"]
 
     def start_requests(self):
-        yield http.Request("https://news.ycombinator.com/newest", meta={'type': 'page', 'num': 1})
+        if not model_util.did_site_run(sites.HN):
+            model_util.set_site_ran(sites.HN)
+
+            yield http.Request("https://news.ycombinator.com/newest", meta={'type': 'page', 'num': 1})
 
     def parse(self, response):
         response_type = response.meta['type']
@@ -55,7 +59,7 @@ class HnSpider(spider.BaseSpider):
                 sn=sn,
                 url=content_link)
 
-        if num < 10:
+        if num < 50:
             more_link = links[-1]
             more_url = util.get_url_from_node(response, more_link.select('./@href'))
 

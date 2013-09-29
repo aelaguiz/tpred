@@ -2,6 +2,8 @@ import datetime
 import tpred.models as models
 import tpred.db as db
 import tpred.model_util as model_util
+import tpred.topic_util as topic_util
+import sys
 
 
 class DatabasePipeline(object):
@@ -18,9 +20,15 @@ class DatabasePipeline(object):
         post.rel_moments.append(moment)
         post.rel_urls.append(url)
 
+        topic_util.update_topics(item['site_id'], post.rel_body, add_value=item['points'])
+
         db.session.add(moment)
         db.session.add(post)
 
-        db.session.commit()
+        try:
+            db.session.commit()
+        except Exception as e:
+            print e
+            sys.exit(1)
 
         return item

@@ -36,12 +36,6 @@ body_topic_map = sqla.Table(
     sqla.Column('topic_id', sqla.BigInteger, sqla.ForeignKey('topic.id'))
 )
 
-topic_moment_map = sqla.Table(
-    'topic_moment_map', db.Base.metadata,
-    sqla.Column('topic_id', sqla.BigInteger, sqla.ForeignKey('topic.id')),
-    sqla.Column('topic_moment_id', sqla.BigInteger, sqla.ForeignKey('topic_moment.id'))
-)
-
 
 class SnModel(db.Base):
     __tablename__ = "sn"
@@ -75,6 +69,13 @@ class SnModel(db.Base):
         return False
 
 
+class SiteRunHistoryModel(db.Base):
+    __tablename__ = "site_run_history"
+
+    site_id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    moment = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+
+
 class UrlModel(db.Base):
     __tablename__ = "url"
 
@@ -89,22 +90,23 @@ class HashtagModel(db.Base):
     hashtag = sqla.Column(sqla.String, nullable=False)
 
 
-class TopicMomentModel(db.Base):
-    __tablename__ = "topic_moment"
-
-    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
-    moment = sqla.Column(sqla.BigInteger, nullable=False)
-    value = sqla.Column(sqla.BigInteger, nullable=False)
-
-
 class TopicModel(db.Base):
     __tablename__ = "topic"
 
     id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
     topic = sqla.Column(sqla.String, nullable=False)
+    num_words = sqla.Column(sqla.Integer, nullable=False)
 
-    rel_moments = orm.relationship(TopicMomentModel, secondary=topic_moment_map)
-    rel_moments_dyn = orm.relationship(TopicMomentModel, secondary=topic_moment_map, lazy="dynamic")
+
+class TopicMomentModel(db.Base):
+    __tablename__ = "topic_moment"
+
+    topic_id = sqla.Column(sqla.BigInteger, sqla.ForeignKey(TopicModel.id), primary_key=True, nullable=False)
+    site_id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    moment = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    value = sqla.Column(sqla.BigInteger, nullable=False)
+
+    rel_topic = orm.relationship(TopicModel)
 
 
 class PostBodyModel(db.Base):

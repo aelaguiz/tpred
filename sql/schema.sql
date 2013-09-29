@@ -24,6 +24,22 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 SET search_path = public, pg_catalog;
 
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: body_topic_map; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE body_topic_map (
+    body_id bigint NOT NULL,
+    topic_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.body_topic_map OWNER TO aelaguiz;
+
 --
 -- Name: hashtag_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
 --
@@ -37,10 +53,6 @@ CREATE SEQUENCE hashtag_id_seq
 
 
 ALTER TABLE public.hashtag_id_seq OWNER TO aelaguiz;
-
-SET default_tablespace = '';
-
-SET default_with_oids = false;
 
 --
 -- Name: hashtag; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
@@ -77,7 +89,9 @@ CREATE TABLE post (
     site_post_id bigint NOT NULL,
     sn_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    body_id bigint
+    body_id bigint,
+    site_id bigint,
+    repost boolean DEFAULT false NOT NULL
 );
 
 
@@ -103,7 +117,7 @@ ALTER TABLE public.post_body_id OWNER TO aelaguiz;
 
 CREATE TABLE post_body (
     id bigint DEFAULT nextval('post_body_id'::regclass) NOT NULL,
-    body character varying NOT NULL
+    body text NOT NULL
 );
 
 
@@ -134,6 +148,45 @@ CREATE TABLE post_mention_map (
 ALTER TABLE public.post_mention_map OWNER TO aelaguiz;
 
 --
+-- Name: post_moment_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
+--
+
+CREATE SEQUENCE post_moment_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.post_moment_id_seq OWNER TO aelaguiz;
+
+--
+-- Name: post_moment; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE post_moment (
+    id bigint DEFAULT nextval('post_moment_id_seq'::regclass) NOT NULL,
+    ts timestamp without time zone DEFAULT now() NOT NULL,
+    points integer NOT NULL
+);
+
+
+ALTER TABLE public.post_moment OWNER TO aelaguiz;
+
+--
+-- Name: post_moment_map; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE post_moment_map (
+    post_id bigint NOT NULL,
+    moment_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.post_moment_map OWNER TO aelaguiz;
+
+--
 -- Name: post_url_map; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
 --
 
@@ -144,6 +197,30 @@ CREATE TABLE post_url_map (
 
 
 ALTER TABLE public.post_url_map OWNER TO aelaguiz;
+
+--
+-- Name: site; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE site (
+    id bigint NOT NULL,
+    site character varying NOT NULL
+);
+
+
+ALTER TABLE public.site OWNER TO aelaguiz;
+
+--
+-- Name: site_run_history; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE site_run_history (
+    site_id bigint NOT NULL,
+    moment bigint NOT NULL
+);
+
+
+ALTER TABLE public.site_run_history OWNER TO aelaguiz;
 
 --
 -- Name: sn_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
@@ -171,11 +248,69 @@ CREATE TABLE sn (
     num_posts integer,
     verified boolean,
     num_favorites integer,
-    last_check timestamp without time zone
+    last_check timestamp without time zone,
+    site_id bigint,
+    site_sn_id bigint,
+    deleted boolean DEFAULT false
 );
 
 
 ALTER TABLE public.sn OWNER TO aelaguiz;
+
+--
+-- Name: topic_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
+--
+
+CREATE SEQUENCE topic_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.topic_id_seq OWNER TO aelaguiz;
+
+--
+-- Name: topic; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE topic (
+    id bigint DEFAULT nextval('topic_id_seq'::regclass) NOT NULL,
+    topic character varying NOT NULL,
+    num_words integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public.topic OWNER TO aelaguiz;
+
+--
+-- Name: topic_moment; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE topic_moment (
+    topic_id bigint NOT NULL,
+    moment bigint NOT NULL,
+    value bigint NOT NULL,
+    site_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.topic_moment OWNER TO aelaguiz;
+
+--
+-- Name: topic_moment_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
+--
+
+CREATE SEQUENCE topic_moment_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.topic_moment_id_seq OWNER TO aelaguiz;
 
 --
 -- Name: url_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
@@ -204,6 +339,14 @@ CREATE TABLE url (
 ALTER TABLE public.url OWNER TO aelaguiz;
 
 --
+-- Name: body_topic_map_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY body_topic_map
+    ADD CONSTRAINT body_topic_map_pkey PRIMARY KEY (body_id, topic_id);
+
+
+--
 -- Name: hashtag_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
 --
 
@@ -220,6 +363,38 @@ ALTER TABLE ONLY post_body
 
 
 --
+-- Name: post_moment_map_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY post_moment_map
+    ADD CONSTRAINT post_moment_map_pkey PRIMARY KEY (post_id, moment_id);
+
+
+--
+-- Name: post_moment_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY post_moment
+    ADD CONSTRAINT post_moment_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: site_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY site
+    ADD CONSTRAINT site_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: site_run_history_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY site_run_history
+    ADD CONSTRAINT site_run_history_pkey PRIMARY KEY (site_id, moment);
+
+
+--
 -- Name: sn_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
 --
 
@@ -228,11 +403,27 @@ ALTER TABLE ONLY sn
 
 
 --
--- Name: sn_unique_key; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+-- Name: sn_site_id_unique_key; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
 --
 
 ALTER TABLE ONLY sn
-    ADD CONSTRAINT sn_unique_key UNIQUE (sn);
+    ADD CONSTRAINT sn_site_id_unique_key UNIQUE (site_id, sn);
+
+
+--
+-- Name: topic_moment_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY topic_moment
+    ADD CONSTRAINT topic_moment_pkey PRIMARY KEY (topic_id, site_id, moment);
+
+
+--
+-- Name: topic_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY topic
+    ADD CONSTRAINT topic_pkey PRIMARY KEY (id);
 
 
 --
@@ -276,11 +467,83 @@ ALTER TABLE ONLY url
 
 
 --
+-- Name: body_topic_map_body_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY body_topic_map
+    ADD CONSTRAINT body_topic_map_body_id_fkey FOREIGN KEY (body_id) REFERENCES post_body(id) ON DELETE CASCADE;
+
+
+--
+-- Name: body_topic_map_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY body_topic_map
+    ADD CONSTRAINT body_topic_map_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES topic(id) ON DELETE CASCADE;
+
+
+--
 -- Name: post_body_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
 --
 
 ALTER TABLE ONLY post
     ADD CONSTRAINT post_body_id_fkey FOREIGN KEY (body_id) REFERENCES post_body(id) ON DELETE CASCADE;
+
+
+--
+-- Name: post_moment_map_moment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY post_moment_map
+    ADD CONSTRAINT post_moment_map_moment_id_fkey FOREIGN KEY (moment_id) REFERENCES post_moment(id) ON DELETE CASCADE;
+
+
+--
+-- Name: post_moment_map_post_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY post_moment_map
+    ADD CONSTRAINT post_moment_map_post_id_fkey FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE;
+
+
+--
+-- Name: post_site_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY post
+    ADD CONSTRAINT post_site_id_fkey FOREIGN KEY (site_id) REFERENCES site(id);
+
+
+--
+-- Name: site_run_history_site_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY site_run_history
+    ADD CONSTRAINT site_run_history_site_id_fkey FOREIGN KEY (site_id) REFERENCES site(id);
+
+
+--
+-- Name: sn_site_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY sn
+    ADD CONSTRAINT sn_site_id_fkey FOREIGN KEY (site_id) REFERENCES site(id);
+
+
+--
+-- Name: topic_moment_site_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY topic_moment
+    ADD CONSTRAINT topic_moment_site_id_fkey FOREIGN KEY (site_id) REFERENCES site(id) ON DELETE CASCADE;
+
+
+--
+-- Name: topic_moment_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY topic_moment
+    ADD CONSTRAINT topic_moment_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES topic(id) ON DELETE CASCADE;
 
 
 --

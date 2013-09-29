@@ -71,7 +71,7 @@ for tweet in it:
             twm.rel_urls.append(urlm)
 
     #print sn.sn, text
-    #print sn.sn, twm.rel_body.body
-    topic_util.update_topics(twm.rel_body)
+    topic_util.update_topics(sites.TWITTER, twm.rel_body)
 
+    print sn.sn, twm.rel_body.body
     db.session.commit()
