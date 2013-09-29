@@ -1,6 +1,7 @@
 import time
 import db
 import models
+import settings
 
 
 def get_sn(site_id, sn_str, **kwargs):
@@ -47,7 +48,7 @@ def get_topic(topic_str):
 
 
 def did_site_run(site_id):
-    moment = int(time.time() / 3600)
+    moment = int(time.time() / settings.MOMENT_SECONDS)
 
     m = db.session.query(
         models.SiteRunHistoryModel).filter(
@@ -61,7 +62,7 @@ def did_site_run(site_id):
 
 
 def set_site_ran(site_id):
-    moment = int(time.time() / 3600)
+    moment = int(time.time() / settings.MOMENT_SECONDS)
 
     m = db.session.query(
         models.SiteRunHistoryModel).filter(
@@ -80,7 +81,7 @@ def set_site_ran(site_id):
 
 
 def get_topic_moment(site_id, topic):
-    moment = int(time.time() / 3600)
+    moment = int(time.time() / settings.MOMENT_SECONDS)
 
     m = db.session.query(
         models.TopicMomentModel).filter(
@@ -137,6 +138,8 @@ def get_hashtag(hashtag_str):
 
 
 def get_post(site_id, text, created_at, site_post_id, sn):
+    site_post_id = str(site_post_id)
+
     m = db.session.query(models.PostModel).filter_by(site_id=site_id, site_post_id=site_post_id).first()
 
     if m:

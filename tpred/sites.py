@@ -1,2 +1,3 @@
 TWITTER = 1
 HN = 2
+REDDIT = 3

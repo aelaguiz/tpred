@@ -6,3 +6,5 @@ USER_AGENT = 'tpred'
 ITEM_PIPELINES = {
     'tpred.spider.database_pipeline.DatabasePipeline': 300
 }
+
+DOWNLOAD_DELAY = 0.5
