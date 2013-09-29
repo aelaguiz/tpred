@@ -6,7 +6,8 @@ import sqlalchemy.ext.declarative as decl
 db_str = os.getenv('DATABASE')
 print db_str
 
-engine = sqla.create_engine(db_str, echo=True)
+engine = sqla.create_engine(db_str)
+#engine = sqla.create_engine(db_str, echo=True)
 Session = orm.sessionmaker(bind=engine)
 session = Session()
 Base = decl.declarative_base()

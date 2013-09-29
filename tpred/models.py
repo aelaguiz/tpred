@@ -30,6 +30,12 @@ post_moment_map = sqla.Table(
     sqla.Column('moment_id', sqla.BigInteger, sqla.ForeignKey('post_moment.id'))
 )
 
+post_topic_map = sqla.Table(
+    'post_topic_map', db.Base.metadata,
+    sqla.Column('post_id', sqla.BigInteger, sqla.ForeignKey('post.id')),
+    sqla.Column('topic_id', sqla.BigInteger, sqla.ForeignKey('topic.id'))
+)
+
 
 class SnModel(db.Base):
     __tablename__ = "sn"
@@ -82,6 +88,13 @@ class HashtagModel(db.Base):
     hashtag = sqla.Column(sqla.String, nullable=False)
 
 
+class TopicModel(db.Base):
+    __tablename__ = "topic"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    topic = sqla.Column(sqla.String, nullable=False)
+
+
 class PostMomentModel(db.Base):
     __tablename__ = "post_moment"
 
@@ -105,3 +118,4 @@ class PostModel(db.Base):
     rel_hashtags = orm.relationship(HashtagModel, secondary=post_hashtag_map)
     rel_urls = orm.relationship(UrlModel, secondary=post_url_map)
     rel_moments = orm.relationship(PostMomentModel, secondary=post_moment_map)
+    rel_topics = orm.relationship(TopicModel, secondary=post_topic_map)
