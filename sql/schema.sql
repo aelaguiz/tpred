@@ -86,7 +86,7 @@ ALTER TABLE public.tweet_id_seq OWNER TO aelaguiz;
 
 CREATE TABLE post (
     id bigint DEFAULT nextval('tweet_id_seq'::regclass) NOT NULL,
-    site_post_id bigint NOT NULL,
+    site_post_id character varying NOT NULL,
     sn_id bigint NOT NULL,
     created_at timestamp without time zone NOT NULL,
     body_id bigint,
@@ -199,6 +199,20 @@ CREATE TABLE post_url_map (
 ALTER TABLE public.post_url_map OWNER TO aelaguiz;
 
 --
+-- Name: run_history_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
+--
+
+CREATE SEQUENCE run_history_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.run_history_id_seq OWNER TO aelaguiz;
+
+--
 -- Name: site; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
 --
 
@@ -278,11 +292,49 @@ ALTER TABLE public.topic_id_seq OWNER TO aelaguiz;
 CREATE TABLE topic (
     id bigint DEFAULT nextval('topic_id_seq'::regclass) NOT NULL,
     topic character varying NOT NULL,
-    num_words integer DEFAULT 1 NOT NULL
+    num_words integer DEFAULT 1 NOT NULL,
+    clustered boolean DEFAULT false
 );
 
 
 ALTER TABLE public.topic OWNER TO aelaguiz;
+
+--
+-- Name: topic_cluster_id; Type: SEQUENCE; Schema: public; Owner: aelaguiz
+--
+
+CREATE SEQUENCE topic_cluster_id
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.topic_cluster_id OWNER TO aelaguiz;
+
+--
+-- Name: topic_cluster; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE topic_cluster (
+    id bigint DEFAULT nextval('topic_cluster_id'::regclass) NOT NULL
+);
+
+
+ALTER TABLE public.topic_cluster OWNER TO aelaguiz;
+
+--
+-- Name: topic_cluster_map; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE topic_cluster_map (
+    cluster_id bigint NOT NULL,
+    topic_id bigint NOT NULL
+);
+
+
+ALTER TABLE public.topic_cluster_map OWNER TO aelaguiz;
 
 --
 -- Name: topic_moment; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
@@ -411,6 +463,22 @@ ALTER TABLE ONLY sn
 
 
 --
+-- Name: topic_cluster_map_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY topic_cluster_map
+    ADD CONSTRAINT topic_cluster_map_pkey PRIMARY KEY (cluster_id, topic_id);
+
+
+--
+-- Name: topic_cluster_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY topic_cluster
+    ADD CONSTRAINT topic_cluster_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: topic_moment_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
 --
 
@@ -528,6 +596,22 @@ ALTER TABLE ONLY site_run_history
 
 ALTER TABLE ONLY sn
     ADD CONSTRAINT sn_site_id_fkey FOREIGN KEY (site_id) REFERENCES site(id);
+
+
+--
+-- Name: topic_cluster_map_cluster_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY topic_cluster_map
+    ADD CONSTRAINT topic_cluster_map_cluster_id_fkey FOREIGN KEY (cluster_id) REFERENCES topic_cluster(id) ON DELETE CASCADE;
+
+
+--
+-- Name: topic_cluster_map_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY topic_cluster_map
+    ADD CONSTRAINT topic_cluster_map_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES topic(id) ON DELETE CASCADE;
 
 
 --

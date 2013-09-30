@@ -37,6 +37,13 @@ body_topic_map = sqla.Table(
 )
 
 
+topic_cluster_map = sqla.Table(
+    'topic_cluster_map', db.Base.metadata,
+    sqla.Column('topic_id', sqla.BigInteger, sqla.ForeignKey('topic.id')),
+    sqla.Column('cluster_id', sqla.BigInteger, sqla.ForeignKey('topic_cluster.id'))
+)
+
+
 class SnModel(db.Base):
     __tablename__ = "sn"
 
@@ -96,6 +103,7 @@ class TopicModel(db.Base):
     id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
     topic = sqla.Column(sqla.String, nullable=False)
     num_words = sqla.Column(sqla.Integer, nullable=False)
+    clustered = sqla.Column(sqla.Boolean, default=False)
 
 
 class TopicMomentModel(db.Base):
@@ -107,6 +115,14 @@ class TopicMomentModel(db.Base):
     value = sqla.Column(sqla.BigInteger, nullable=False)
 
     rel_topic = orm.relationship(TopicModel)
+
+
+class TopicClusterModel(db.Base):
+    __tablename__ = "topic_cluster"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+
+    rel_topics = orm.relationship(TopicModel, secondary=topic_cluster_map)
 
 
 class PostBodyModel(db.Base):
