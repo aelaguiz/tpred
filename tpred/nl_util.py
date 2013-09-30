@@ -15,6 +15,8 @@ word_re = re.compile("[a-zA-Z0-9][a-zA-Z0-9'-]*")
 bg_re = re.compile("([\d]+)\s+([\w';-]+)\s+([\w';-]+)")
 tg_re = re.compile("([\d]+)\s+([\w';-]+)\s+([\w';-]+)\s+([\w';-]+)")
 
+url_re = re.compile(ur'(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?\xab\xbb\u201c\u201d\u2018\u2019]))')
+
 lmtzr = WordNetLemmatizer()
 sw = stopwords.words()
 sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
@@ -71,12 +73,12 @@ def load_tg():
     f.close()
 
 
-bg = []
-tg = []
-sw2 = []
-#bg = list(load_bg())
-#tg = list(load_tg())
-#sw2 = list(load_words())
+#bg = []
+#tg = []
+#sw2 = []
+bg = list(load_bg())
+tg = list(load_tg())
+sw2 = list(load_words())
 
 
 def sentences(blob):
@@ -102,9 +104,19 @@ def is_number(s):
         return False
 
 
+def strip_urls(blob):
+    matches = url_re.findall(blob)
+    for match in matches:
+        blob = blob.replace(match[0], "")
+
+    return blob
+
+
 def prep(blob):
     blob = blob.lower()
 
+    blob = strip_urls(blob)
+    
     tokens = tokenizer.tokenize(blob)
 
     words = [x for x in tokens if len(x) > 1]
