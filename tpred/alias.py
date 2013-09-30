@@ -1,8 +1,9 @@
 import db
 import sqlalchemy as sqla
-import pprint
+import pprint  # NOQA
 import numpy as np
 import models
+import model_util
 import nltk
 import nltk.stem
 import nltk.cluster as cluster
@@ -79,25 +80,30 @@ def go_cluster(topic_rows):
         output_clusters[cluster_id].append(t)
         clusters[cluster_id].append(tid)
 
-    pprint.pprint(clusters)
+    #pprint.pprint(clusters)
 
+    print "Saving clusters"
     save_clusters(output_clusters)
 
     return []
 
-    #clusters = {}
 
-    #for topic in topics:
-        ##print topic.CLUSTER
-        #print topic, c.classify(vectorspaced(topic, words))
-
-while True:
-    num_procs = 8
+def cluster_topics():
+    num_procs = 1
     per_proc = 1000
-    topic_rows = db.session.query(models.TopicModel.id, models.TopicModel.topic).filter_by(clustered=False).order_by(models.TopicModel.id.asc()).limit(num_procs * per_proc).all()
+    pool = mputil.get_pool(num_procs)
 
-    if len(topic_rows) < per_proc:
-        go_cluster(topic_rows)
-        break
-    else:
-        mputil.multiproc(topic_rows, num_procs, go_cluster)
+    while True:
+        topic_rows = db.session.query(models.TopicModel.id, models.TopicModel.topic).filter_by(clustered=False).order_by(models.TopicModel.id.asc()).limit(num_procs * per_proc).all()
+
+        if len(topic_rows) < per_proc:
+            go_cluster(topic_rows)
+            break
+        else:
+            mputil.multiproc(topic_rows, num_procs, go_cluster, pool=pool)
+
+
+if __name__ == '__main__':
+    if not model_util.did_run("alias"):
+        model_util.set_ran("alias")
+        cluster_topics()

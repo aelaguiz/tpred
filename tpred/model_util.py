@@ -47,6 +47,39 @@ def get_topic(topic_str):
     return m
 
 
+def did_run(key):
+    moment = int(time.time() / settings.MOMENT_SECONDS)
+
+    m = db.session.query(
+        models.RunHistoryModel).filter(
+            models.RunHistoryModel.moment == moment,
+            models.RunHistoryModel.key == key).first()
+
+    if m:
+        return True
+
+    return False
+
+
+def set_ran(key):
+    moment = int(time.time() / settings.MOMENT_SECONDS)
+
+    m = db.session.query(
+        models.RunHistoryModel).filter(
+            models.RunHistoryModel.moment == moment,
+            models.RunHistoryModel.key == key).first()
+
+    if m:
+        return
+
+    m = models.RunHistoryModel(
+        key=key,
+        moment=moment)
+
+    db.session.add(m)
+    db.session.commit()
+
+
 def did_site_run(site_id):
     moment = int(time.time() / settings.MOMENT_SECONDS)
 

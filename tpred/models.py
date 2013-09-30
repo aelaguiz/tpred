@@ -83,6 +83,13 @@ class SiteRunHistoryModel(db.Base):
     moment = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
 
 
+class RunHistoryModel(db.Base):
+    __tablename__ = "run_history"
+
+    key = sqla.Column(sqla.String, primary_key=True, nullable=False)
+    moment = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+
+
 class UrlModel(db.Base):
     __tablename__ = "url"
 
