@@ -199,6 +199,18 @@ CREATE TABLE post_url_map (
 ALTER TABLE public.post_url_map OWNER TO aelaguiz;
 
 --
+-- Name: run_history; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE run_history (
+    key character varying NOT NULL,
+    moment bigint NOT NULL
+);
+
+
+ALTER TABLE public.run_history OWNER TO aelaguiz;
+
+--
 -- Name: run_history_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
 --
 
@@ -351,6 +363,36 @@ CREATE TABLE topic_moment (
 ALTER TABLE public.topic_moment OWNER TO aelaguiz;
 
 --
+-- Name: topic_moment_deriv_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
+--
+
+CREATE SEQUENCE topic_moment_deriv_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.topic_moment_deriv_id_seq OWNER TO aelaguiz;
+
+--
+-- Name: topic_moment_deriv; Type: TABLE; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE TABLE topic_moment_deriv (
+    id bigint DEFAULT nextval('topic_moment_deriv_id_seq'::regclass) NOT NULL,
+    site_id bigint NOT NULL,
+    topic_id bigint NOT NULL,
+    moment_from bigint NOT NULL,
+    moment_to bigint NOT NULL,
+    value double precision
+);
+
+
+ALTER TABLE public.topic_moment_deriv OWNER TO aelaguiz;
+
+--
 -- Name: topic_moment_id_seq; Type: SEQUENCE; Schema: public; Owner: aelaguiz
 --
 
@@ -431,6 +473,14 @@ ALTER TABLE ONLY post_moment
 
 
 --
+-- Name: run_history_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY run_history
+    ADD CONSTRAINT run_history_pkey PRIMARY KEY (key, moment);
+
+
+--
 -- Name: site_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
 --
 
@@ -476,6 +526,14 @@ ALTER TABLE ONLY topic_cluster_map
 
 ALTER TABLE ONLY topic_cluster
     ADD CONSTRAINT topic_cluster_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: topic_moment_deriv_pkey; Type: CONSTRAINT; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+ALTER TABLE ONLY topic_moment_deriv
+    ADD CONSTRAINT topic_moment_deriv_pkey PRIMARY KEY (id);
 
 
 --
@@ -532,6 +590,13 @@ ALTER TABLE ONLY post_url_map
 
 ALTER TABLE ONLY url
     ADD CONSTRAINT url_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: topic_moment_deriv_unique_index; Type: INDEX; Schema: public; Owner: aelaguiz; Tablespace: 
+--
+
+CREATE UNIQUE INDEX topic_moment_deriv_unique_index ON topic_moment_deriv USING btree (site_id, topic_id, moment_from, moment_to);
 
 
 --
@@ -612,6 +677,22 @@ ALTER TABLE ONLY topic_cluster_map
 
 ALTER TABLE ONLY topic_cluster_map
     ADD CONSTRAINT topic_cluster_map_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES topic(id) ON DELETE CASCADE;
+
+
+--
+-- Name: topic_moment_deriv_site_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY topic_moment_deriv
+    ADD CONSTRAINT topic_moment_deriv_site_id_fkey FOREIGN KEY (site_id) REFERENCES site(id) ON DELETE CASCADE;
+
+
+--
+-- Name: topic_moment_deriv_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aelaguiz
+--
+
+ALTER TABLE ONLY topic_moment_deriv
+    ADD CONSTRAINT topic_moment_deriv_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES topic(id) ON DELETE CASCADE;
 
 
 --

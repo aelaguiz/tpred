@@ -124,6 +124,19 @@ class TopicMomentModel(db.Base):
     rel_topic = orm.relationship(TopicModel)
 
 
+class TopicMomentDerivModel(db.Base):
+    __tablename__ = "topic_moment_deriv"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    topic_id = sqla.Column(sqla.BigInteger, sqla.ForeignKey(TopicModel.id), nullable=False)
+    site_id = sqla.Column(sqla.BigInteger, nullable=False)
+    moment_from = sqla.Column(sqla.BigInteger, nullable=False)
+    moment_to = sqla.Column(sqla.BigInteger, nullable=False)
+    value = sqla.Column(sqla.BigInteger, nullable=False)
+
+    rel_topic = orm.relationship(TopicModel)
+
+
 class TopicClusterModel(db.Base):
     __tablename__ = "topic_cluster"
 
