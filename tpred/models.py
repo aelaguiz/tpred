@@ -137,6 +137,19 @@ class TopicMomentDerivModel(db.Base):
     rel_topic = orm.relationship(TopicModel)
 
 
+class AvgMomentumPeriodReportModel(db.Base):
+    __tablename__ = "avg_momentum_period_report"
+
+    id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
+    topic_id = sqla.Column(sqla.BigInteger, sqla.ForeignKey(TopicModel.id), nullable=False)
+    site_id = sqla.Column(sqla.BigInteger, nullable=False)
+    period = sqla.Column(sqla.SmallInteger, nullable=False)
+    moment = sqla.Column(sqla.BigInteger, nullable=False)
+    value = sqla.Column(sqla.BigInteger, nullable=False)
+
+    rel_topic = orm.relationship(TopicModel)
+
+
 class TopicClusterModel(db.Base):
     __tablename__ = "topic_cluster"
 
