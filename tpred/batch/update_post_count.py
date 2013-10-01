@@ -13,12 +13,13 @@ def update():
     query = """INSERT 
         INTO
             moment_topic_post_count
-            (topic_id, body_id, moment, num_posts)  
+            (topic_id, body_id, moment, num_posts, site_id)  
         SELECT
                 tm.topic_id as topic_id,
                 b.id AS body_id,
                 tm.moment as moment,
-                COUNT(*) as num_posts
+                COUNT(*) as num_posts,
+                p.site_id as site_id
             FROM
                 topic_moment tm
             JOIN
@@ -33,6 +34,7 @@ def update():
             WHERE
                 tm.moment={}
             GROUP BY
+                p.site_id,
                 tm.topic_id,
                 b.id,
                 tm.moment""".format(moment)
