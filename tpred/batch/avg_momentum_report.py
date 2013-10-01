@@ -5,12 +5,6 @@ import tpred.models as models
 import tpred.sites as sites
 import tpred.model_util as model_util  # NOQA
 
-#if model_util.did_run("calculate_first_deriv"):
-    #sys.exit(1)
-
-#model_util.set_ran("calculate_first_deriv")
-
-
 def calc_report(period, period_moments):
     n = 2
 
@@ -62,7 +56,10 @@ def calc_report(period, period_moments):
             db.session.commit()
 
 
-calc_report(1, 4 * 24)
-calc_report(2, 4 * 12)
-calc_report(3, 4 * 4)
-calc_report(4, 4 * 1)
+if not model_util.did_run("calculate_avg_momentum_report"):
+    model_util.set_ran("calculate_avg_momentum_report")
+
+    calc_report(1, 4 * 24)
+    calc_report(2, 4 * 12)
+    calc_report(3, 4 * 4)
+    calc_report(4, 4 * 1)
