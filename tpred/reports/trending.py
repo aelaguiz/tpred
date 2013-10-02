@@ -1,4 +1,5 @@
 import sys
+import tpred.util.gs as gs
 import csv
 import tpred.db as db
 import tpred.sites as sites
@@ -155,26 +156,27 @@ def run_report(n, out_path):
 
         for site_id in sites.site_array:
             if site_id not in data:
-                vals.append(0)
-                num_posts.append(0)
+                vals.append("0")
+                num_posts.append("0")
                 bodies.append("")
             else:
                 avg, num, body = data[site_id]
-                vals.append(avg)
-                num_posts.append(num)
-                bodies.append(body.encode("utf8"))
+                vals.append(str(avg))
+                num_posts.append(str(num))
+                bodies.append(body)
 
         output.append(
             [topics[topic_id]] + vals + num_posts + bodies)
 
-    f = open(out_path, "wb")
-    w = csv.writer(f)
+    #f = open(out_path, "wb")
+    #w = csv.writer(f)
 
-    w.writerow(header)
-    for row in output:
-        w.writerow(row)
+    #w.writerow(header)
+    #for row in output:
+        #w.writerow(row)
 
-    f.close()
+    #f.close()
+    gs.write_rows("0AjSJDwtAOPxndG5JMjdwamN5NkUwRDNfUkFrVVZPMWc", header, output)
 
 
 if __name__ == '__main__':
@@ -182,3 +184,4 @@ if __name__ == '__main__':
     out_file = sys.argv[2]
 
     run_report(n, out_file)
+    #gs.write_rows("0AjSJDwtAOPxndG5JMjdwamN5NkUwRDNfUkFrVVZPMWc", ["test", "test2"], [[1, 2], [3, 4]])
