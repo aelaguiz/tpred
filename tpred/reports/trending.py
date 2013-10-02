@@ -122,7 +122,6 @@ def run_report(n, out_path):
         top_posts = {}
         for topic_id, num_posts, body in posts:
             if topic_id not in top_posts:
-                print topic_id, topics[topic_id], num_posts, body
                 top_posts[topic_id] = (num_posts, body)
 
                 if not (site_id, topic_id) in data:
@@ -143,9 +142,6 @@ def run_report(n, out_path):
                     data[(site_id, topic_id)]['avg'],
                     num_posts,
                     body)
-
-    import pprint
-    pprint.pprint(topic_chart)
 
     header = ["Topic"] + [s + " Momentum" for s in sites.site_names] + [s + " Num Posts" for s in sites.site_names] + [s + " Post" for s in sites.site_names]
     output = []
