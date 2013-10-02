@@ -73,7 +73,7 @@ def run_report(n, out_path):
             'top_posts': []
         }
 
-    site_avgs = {}
+    avgs = []
     for (site_id, topic_id, end_val) in end_vals:
         start_val = data[(site_id, topic_id)]['start']
 
@@ -81,15 +81,13 @@ def run_report(n, out_path):
         data[(site_id, topic_id)]['diff'] = end_val - start_val
         data[(site_id, topic_id)]['avg'] = (end_val - start_val) / float(n)
 
-        if not site_id in site_avgs:
-            site_avgs[site_id] = []
+        if site_id == 1:
+            avgs.append((site_id, topic_id, data[(site_id, topic_id)]['avg']))
 
-        site_avgs[site_id].append((site_id, topic_id, data[(site_id, topic_id)]['avg']))
+    avgs = sorted(avgs, key=lambda x: x[2], reverse=True)[:200]
 
     topic_chart = {}
-    for site_id, avgs in site_avgs.iteritems():
-        avgs = sorted(avgs, key=lambda x: x[2], reverse=True)[:10]
-
+    for site_id in sites.site_array:
         q = """
         SELECT
             btm.topic_id,
@@ -108,6 +106,7 @@ def run_report(n, out_path):
             ON
                 p.body_id=pb.id
         WHERE
+            p.site_id={} AND
             btm.topic_id IN ({})
         GROUP BY
             btm.topic_id,
@@ -115,7 +114,7 @@ def run_report(n, out_path):
         ORDER BY
             btm.topic_id,
             num_posts DESC
-        """.format(",".join([str(r[1]) for r in avgs]))
+        """.format(site_id, ",".join([str(r[1]) for r in avgs]))
 
         posts = db.session.execute(q)
 
@@ -124,6 +123,16 @@ def run_report(n, out_path):
             if topic_id not in top_posts:
                 print topic_id, topics[topic_id], num_posts, body
                 top_posts[topic_id] = (num_posts, body)
+
+                if not (site_id, topic_id) in data:
+                    data[(site_id, topic_id)] = {
+                        'start': 0,
+                        'end': 0,
+                        'diff': 0,
+                        'avg': 0,
+                        'top_posts': []
+                    }
+
                 data[(site_id, topic_id)]['top_posts'].append((num_posts, body))
 
                 if not topic_id in topic_chart:
