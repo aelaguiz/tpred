@@ -59,7 +59,7 @@ class HnSpider(spider.BaseSpider):
                 sn=sn,
                 url=content_link)
 
-        if num < 50:
+        if num < 5:
             more_link = links[-1]
             more_url = util.get_url_from_node(response, more_link.select('./@href'))
 
