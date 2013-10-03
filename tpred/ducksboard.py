@@ -12,8 +12,6 @@ def send_to_ducksboard(id, msg):
     endpoint = "https://push.ducksboard.com/v/{}".format(id)
 
     #log.debug("Sending to ducksboard {} {}".format(id, msg))
-    print endpoint, msg
-
     request = urllib2.Request(endpoint)
     auth = base64.encodestring('%s:x' % DUCKSBOARD_API_KEY)
     auth = auth.replace('\n', '')

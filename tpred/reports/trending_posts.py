@@ -31,7 +31,6 @@ def run_report(minutes, filter_links=False):
             continue
 
         used.add(body_id)
-        print site_id, body_id, num_reposts, body, sn, diff, url, pic_url
 
         if url is None:
             url = ""
