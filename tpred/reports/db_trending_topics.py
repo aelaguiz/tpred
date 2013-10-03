@@ -28,7 +28,7 @@ def create_lookup_table(moments):
         topic_moment tm
     JOIN topic t ON tm.topic_id=t.id
     WHERE
-        tm.moment IN ({})
+        tm.moment IN ({}) AND t.num_words >= 2
     GROUP BY
         tm.topic_id,
         t.id,
