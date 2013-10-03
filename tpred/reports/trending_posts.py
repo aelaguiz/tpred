@@ -29,6 +29,9 @@ def run_report(minutes, filter_links=False):
     res = db.session.execute(q)
     used = set()
     for site_id, body_id, num_reposts, site_post_id, body, sn, diff, url, pic_url in res:
+        if '#Forbes30' in body:
+            continue
+
         if body_id in used:
             continue
         if num_reposts <= 1:
