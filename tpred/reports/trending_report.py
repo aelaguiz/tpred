@@ -36,6 +36,8 @@ def create_lookup_table(n):
             ORDER BY
                 moment DESC LIMIT {}
         )
+        AND
+        t.topic NOT LIKE '%forbes30%'
     GROUP BY
         tm.topic_id,
         t.id,
