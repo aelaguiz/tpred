@@ -36,7 +36,8 @@ def mine(it):
             num_posts=user['statuses_count'],
             num_friends=user['friends_count'],
             num_favorites=user['favourites_count'],
-            verified=user['verified'])
+            verified=user['verified'],
+            pic_url=user['profile_image_url'])
 
         created_at = dateutil.parser.parse(tweet['created_at'])
 

@@ -56,6 +56,7 @@ class SnModel(db.Base):
     num_favorites = sqla.Column(sqla.Integer)
     num_posts = sqla.Column(sqla.Integer)
     verified = sqla.Column(sqla.Boolean)
+    pic_url = sqla.Column(sqla.String)
     deleted = sqla.Column(sqla.Boolean, default=False)
     last_check = sqla.Column(sqla.DateTime)
 
