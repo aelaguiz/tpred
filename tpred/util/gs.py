@@ -56,7 +56,6 @@ def write_rows(spreadsheet_key, header, rows):
             c = c.replace(" ", "")
             d[c] = r
 
-        print d, spreadsheet_key, ws_key
         spr_client.InsertRow(d, spreadsheet_key, ws_key)
 
 
