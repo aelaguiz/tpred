@@ -20,7 +20,7 @@ class DatabasePipeline(object):
         post.rel_moments.append(moment)
         post.rel_urls.append(url)
 
-        topic_util.update_topics(item['site_id'], post.rel_body, add_value=item['points'])
+        topic_util.update_topics(item['site_id'], post.rel_body, set_value=item['points'])
 
         db.session.add(moment)
         db.session.add(post)

@@ -3,7 +3,7 @@ import db
 import model_util
 
 
-def update_topics(site_id, body, add_value=None):
+def update_topics(site_id, body, set_value=None):
     text = body.body
 
     words = [s.lower() for s in nl_util.prep(text)]
@@ -12,12 +12,12 @@ def update_topics(site_id, body, add_value=None):
     bigrams = list(nl_util.bigrams(words, 1000))
     trigrams = list(nl_util.trigrams(words, 1000))
 
-    add_topics(site_id, body, common, add_value)
-    add_topics(site_id, body, bigrams, add_value)
-    add_topics(site_id, body, trigrams, add_value)
+    add_topics(site_id, body, common, set_value)
+    add_topics(site_id, body, bigrams, set_value)
+    add_topics(site_id, body, trigrams, set_value)
 
 
-def add_topics(site_id, body, topics, add_value=None):
+def add_topics(site_id, body, topics, set_value=None):
     for topic_word in topics:
         if isinstance(topic_word, tuple):
             topic_word = " ".join(topic_word)
@@ -28,8 +28,8 @@ def add_topics(site_id, body, topics, add_value=None):
 
         moment = model_util.get_topic_moment(site_id, topic)
 
-        if add_value:
-            moment.value += add_value
+        if set_value:
+            moment.value = set_value
         else:
             moment.value += 1
 

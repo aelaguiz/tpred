@@ -17,10 +17,7 @@ class RedditSpider(spider.BaseSpider):
     allowed_domains = ["www.reddit.com"]
 
     def start_requests(self):
-        if not model_util.did_site_run(sites.REDDIT):
-            model_util.set_site_ran(sites.REDDIT)
-
-            yield http.Request("http://www.reddit.com/new", meta={'type': 'page', 'num': 1})
+        yield http.Request("http://www.reddit.com/rising", meta={'type': 'page', 'num': 1})
 
     def parse(self, response):
         response_type = response.meta['type']
