@@ -1,4 +1,5 @@
 import pprint  # NOQA
+import tpred.sites as sites
 import tpred.db as db
 
 
@@ -92,10 +93,12 @@ def run_report(n, top_n):
 
         avg = (diff) / float(n)
 
-        avgs.append((topics[topic_id], site_id, diff, avg))
+        avgs.append((topics[topic_id], sites.site_map[site_id], diff, avg))
 
     avgs = sorted(avgs, key=lambda x: x[2], reverse=True)[:top_n]
 
     db.session.execute("DROP TABLE tr_mx;")
+
+    pprint.pprint(avgs)
 
     return avgs
