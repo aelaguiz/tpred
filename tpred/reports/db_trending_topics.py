@@ -99,6 +99,6 @@ def run_report(n, top_n):
 
     db.session.execute("DROP TABLE tr_mx;")
 
-    pprint.pprint(avgs)
+    #pprint.pprint(avgs)
 
     return avgs
