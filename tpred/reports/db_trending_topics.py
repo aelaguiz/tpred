@@ -29,7 +29,7 @@ def create_lookup_table(moments):
         topic_moment tm
     JOIN topic t ON tm.topic_id=t.id
     WHERE
-        tm.moment IN ({})
+        tm.moment IN ({}) and t.num_words >= 2
     GROUP BY
         tm.topic_id,
         t.id,
@@ -135,6 +135,6 @@ def run_report(n):
 
     db.session.execute("DROP TABLE tr_mx;")
 
-    #pprint.pprint(avgs)
+    #pprint.pprint(avgs[:200])
 
     return grouped_avgs
