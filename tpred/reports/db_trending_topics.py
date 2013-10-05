@@ -1,6 +1,7 @@
 import pprint  # NOQA
 import tpred.sites as sites
 import tpred.db as db
+import collections
 
 
 def get_moments(n):
@@ -37,6 +38,56 @@ def create_lookup_table(moments):
 
     db.session.execute(q)
     db.session.commit()
+
+
+def grouped(avgs):
+    g1 = _grouped(avgs)
+
+    g2 = _grouped(g1)
+
+    for topic, _, site, val, avg in g2:
+        yield (topic, site, val, avg)
+
+
+def _grouped(avgs):
+    ## Group things together
+    grouped = collections.defaultdict(dict)
+
+    for topic, words, site, val, avg in avgs:
+        #topic = topic.encode("utf8")
+        found = False
+
+        for key, data in grouped[site].iteritems():
+            if data['words'].issuperset(words) or \
+                    words.issuperset(data['words']):
+                group_avg = data['avg']
+
+                # If the values are within 5%
+                if (avg != 0 and (abs(group_avg - avg) / float(avg)) < 0.05) or \
+                        (avg == group_avg):
+
+                    print "Grouping", topic, "with", data['topic'], "key", key
+
+                    if words.issuperset(data['words']):
+                        print "\tReplacing", data['topic'], "with", topic, "key", key
+                        grouped[site][key]['topic'] = topic
+                        grouped[site][key]['words'] = words
+
+                    found = True
+                    break
+
+        if not found:
+            print "Did not find", topic, "Adding"
+            grouped[site][topic] = {
+                'topic': topic,
+                'words': words,
+                'val': val,
+                'avg': avg
+            }
+    
+    for site, site_vals in grouped.iteritems():
+        for key, data in site_vals.iteritems():
+            yield (data['topic'], data['words'], site, data['val'], data['avg'])
 
 
 def run_report(n):
@@ -103,38 +154,18 @@ def run_report(n):
 
         #print topics[topic_id], "Start val", start_val, "End Val", end_val, "Max moment", max_moment, "Min Moment", min_moment, "Max idx", max_idx, "Min idx", min_idx, "Num moments", num_moments, "Diff", diff, "Avg", avg
 
-        avgs.append((topics[topic_id], sites.site_map[site_id], diff, avg))
+        avgs.append((topics[topic_id], set(topics[topic_id].split(" ")), sites.site_map[site_id], diff, avg))
 
-    avgs = sorted(avgs, key=lambda x: x[2], reverse=True)
+    avgs = sorted(avgs, key=lambda x: x[2], reverse=True)[:500]
 
-    ## Group things together
-    grouped_avgs = []
+    print "Grouping", len(avgs), "items"
 
-    group_topic = None
-    group_site = None
-    group_val = None
-    group_avg = None
-
-    for topic, site, val, avg in avgs:
-        found = False
-
-        if site == group_site:
-            if group_val == val and group_avg == avg:
-                if group_topic in topic:
-                    group_topic = topic
-
-                found = True
-
-        if not found:
-            group_topic = topic
-            group_site = site
-            group_val = val
-            group_avg = avg
-
-            grouped_avgs.append((topic, site, val, avg))
+    grouped_avgs = grouped(avgs)
 
     db.session.execute("DROP TABLE tr_mx;")
 
-    #pprint.pprint(avgs[:200])
+    grouped_avgs = sorted(grouped_avgs, key=lambda x: x[3], reverse=True)
+
+    pprint.pprint(grouped_avgs[:200])
 
     return grouped_avgs
