@@ -45,9 +45,11 @@ def mine(it):
         if retweet:
             twm.repost = True
 
+        stopwords = []
         if 'user_mentions' in tweet['entities']:
             for mention in tweet['entities']['user_mentions']:
                 msn = model_util.get_sn(sites.TWITTER, mention['screen_name'])
+                stopwords.append(mention['screen_name'])
 
                 twm.rel_mentions.append(msn)
 
@@ -64,7 +66,7 @@ def mine(it):
                 twm.rel_urls.append(urlm)
 
         #print sn.sn, text
-        topic_util.update_topics(sites.TWITTER, twm.rel_body)
+        topic_util.update_topics(sites.TWITTER, twm.rel_body, stopwords=stopwords)
 
         print sn.sn, twm.rel_body.body
         db.session.commit()

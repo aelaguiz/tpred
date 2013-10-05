@@ -3,10 +3,11 @@ import db
 import model_util
 
 
-def update_topics(site_id, body, set_value=None):
+def update_topics(site_id, body, set_value=None, stopwords=[]):
     text = body.body
 
-    words = [s.lower() for s in nl_util.prep(text)]
+    sw = [w.lower() for w in stopwords]
+    words = [s.lower() for s in nl_util.prep(text) if s not in sw]
 
     common = list(nl_util.common_words(words, 1000))
     bigrams = list(nl_util.bigrams(words, 1000))
