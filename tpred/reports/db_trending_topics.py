@@ -166,6 +166,6 @@ def run_report(n):
 
     grouped_avgs = sorted(grouped_avgs, key=lambda x: x[3], reverse=True)
 
-    pprint.pprint(grouped_avgs[:200])
+    #pprint.pprint(grouped_avgs[:200])
 
     return grouped_avgs
