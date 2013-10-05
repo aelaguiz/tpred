@@ -29,7 +29,7 @@ def create_lookup_table(moments):
         topic_moment tm
     JOIN topic t ON tm.topic_id=t.id
     WHERE
-        tm.moment IN ({}) AND t.num_words >= 2
+        tm.moment IN ({})
     GROUP BY
         tm.topic_id,
         t.id,
@@ -50,7 +50,8 @@ def run_report(n):
         tm.site_id,
         tm.topic_id,
         tm.value,
-        tr_mx.topic
+        tr_mx.topic,
+        tr_mx.min_moment
     FROM
         topic_moment tm
     JOIN tr_mx ON
@@ -65,7 +66,8 @@ def run_report(n):
     SELECT
         tm.site_id,
         tm.topic_id,
-        tm.value
+        tm.value,
+        tr_mx.max_moment
     FROM
         topic_moment tm
     JOIN tr_mx ON
@@ -78,26 +80,37 @@ def run_report(n):
 
     topics = {}
     data = {}
-    for (site_id, topic_id, start_val, topic) in start_vals:
+    for (site_id, topic_id, start_val, topic, min_moment) in start_vals:
         topics[topic_id] = topic
 
         data[(site_id, topic_id)] = {
-            'start': start_val
+            'start': start_val,
+            'min_moment': min_moment
         }
 
     avgs = []
-    for (site_id, topic_id, end_val) in end_vals:
+    for (site_id, topic_id, end_val, max_moment) in end_vals:
         start_val = data[(site_id, topic_id)]['start']
+        min_moment = data[(site_id, topic_id)]['min_moment']
+
+        min_idx = moments.index(min_moment)
+        max_idx = moments.index(max_moment)
 
         diff = end_val - start_val
 
         avg = (diff) / float(n)
 
+        num_moments = (min_idx - max_idx) + 1
+        avg = (diff) / float(n)
+        avg = (diff) / float(num_moments)
+
+        print topics[topic_id], "Start val", start_val, "End Val", end_val, "Max moment", max_moment, "Min Moment", min_moment, "Max idx", max_idx, "Min idx", min_idx, "Num moments", num_moments, "Diff", diff, "Avg", avg
+
         avgs.append((topics[topic_id], sites.site_map[site_id], diff, avg))
 
     avgs = sorted(avgs, key=lambda x: x[2], reverse=True)
 
-    # Group things together
+    ## Group things together
     grouped_avgs = []
 
     group_topic = None
