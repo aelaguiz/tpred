@@ -69,7 +69,7 @@ def _grouped(avgs):
                     #print "Grouping", topic, "with", data['topic'], "key", key
 
                     if words.issuperset(data['words']):
-                        print "\tReplacing", data['topic'], "with", topic, "key", key
+                        #print "\tReplacing", data['topic'], "with", topic, "key", key
                         grouped[site][key]['topic'] = topic
                         grouped[site][key]['words'] = words
 
