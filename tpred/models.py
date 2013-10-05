@@ -121,6 +121,7 @@ class TopicMomentModel(db.Base):
     site_id = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
     moment = sqla.Column(sqla.BigInteger, primary_key=True, nullable=False)
     value = sqla.Column(sqla.BigInteger, nullable=False)
+    fixed = sqla.Column(sqla.Boolean, default=False)
 
     rel_topic = orm.relationship(TopicModel)
 
