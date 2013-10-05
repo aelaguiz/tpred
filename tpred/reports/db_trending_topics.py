@@ -98,13 +98,10 @@ def run_report(n):
 
         diff = end_val - start_val
 
-        avg = (diff) / float(n)
-
         num_moments = (min_idx - max_idx) + 1
-        avg = (diff) / float(n)
         avg = (diff) / float(num_moments)
 
-        print topics[topic_id], "Start val", start_val, "End Val", end_val, "Max moment", max_moment, "Min Moment", min_moment, "Max idx", max_idx, "Min idx", min_idx, "Num moments", num_moments, "Diff", diff, "Avg", avg
+        #print topics[topic_id], "Start val", start_val, "End Val", end_val, "Max moment", max_moment, "Min Moment", min_moment, "Max idx", max_idx, "Min idx", min_idx, "Num moments", num_moments, "Diff", diff, "Avg", avg
 
         avgs.append((topics[topic_id], sites.site_map[site_id], diff, avg))
 
