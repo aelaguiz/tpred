@@ -124,11 +124,11 @@ def get_topic_moment(site_id, topic):
     if m:
         return m
 
-    try:
-        prev_value = db.session.query(models.TopicMomentModel.value).filter_by(moment=moment).order_by(models.TopicMomentModel.moment.desc()).limit(1).one()[0]
-    except Exception as e:
-        print "Exception", e
-        prev_value = 0
+    prev_value = 0
+    row = db.session.query(models.TopicMomentModel.value).filter_by(moment=moment).order_by(models.TopicMomentModel.moment.desc()).limit(1).first()
+
+    if row:
+        prev_value = row[0]
 
     m = models.TopicMomentModel(
         site_id=site_id,

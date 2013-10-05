@@ -39,7 +39,7 @@ def create_lookup_table(moments):
     db.session.commit()
 
 
-def run_report(n, top_n):
+def run_report(n):
     print "Running report for", n, "Periods"
     moments = get_moments(n)
 
@@ -95,10 +95,36 @@ def run_report(n, top_n):
 
         avgs.append((topics[topic_id], sites.site_map[site_id], diff, avg))
 
-    avgs = sorted(avgs, key=lambda x: x[2], reverse=True)[:top_n]
+    avgs = sorted(avgs, key=lambda x: x[2], reverse=True)
+
+    # Group things together
+    grouped_avgs = []
+
+    group_topic = None
+    group_site = None
+    group_val = None
+    group_avg = None
+
+    for topic, site, val, avg in avgs:
+        found = False
+
+        if site == group_site:
+            if group_val == val and group_avg == avg:
+                if group_topic in topic:
+                    group_topic = topic
+
+                found = True
+
+        if not found:
+            group_topic = topic
+            group_site = site
+            group_val = val
+            group_avg = avg
+
+            grouped_avgs.append((topic, site, val, avg))
 
     db.session.execute("DROP TABLE tr_mx;")
 
     #pprint.pprint(avgs)
 
-    return avgs
+    return grouped_avgs
