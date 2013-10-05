@@ -66,7 +66,7 @@ def _grouped(avgs):
                 if (avg != 0 and (abs(group_avg - avg) / float(avg)) < 0.05) or \
                         (avg == group_avg):
 
-                    print "Grouping", topic, "with", data['topic'], "key", key
+                    #print "Grouping", topic, "with", data['topic'], "key", key
 
                     if words.issuperset(data['words']):
                         print "\tReplacing", data['topic'], "with", topic, "key", key
@@ -77,7 +77,7 @@ def _grouped(avgs):
                     break
 
         if not found:
-            print "Did not find", topic, "Adding"
+            #print "Did not find", topic, "Adding"
             grouped[site][topic] = {
                 'topic': topic,
                 'words': words,
