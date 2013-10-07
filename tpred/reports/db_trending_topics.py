@@ -41,9 +41,13 @@ def create_lookup_table(moments):
 
 
 def grouped(avgs):
-    g1 = _grouped(avgs)
+    g1 = list(_grouped(avgs))
 
-    g2 = _grouped(g1)
+    #pprint.pprint(sorted(g1, key=lambda x: x[4], reverse=True))
+
+    g2 = list(_grouped(g1))
+
+    #pprint.pprint(sorted(g2, key=lambda x: x[4], reverse=True))
 
     for topic, _, site, val, avg in g2:
         yield (topic, site, val, avg)
@@ -156,7 +160,7 @@ def run_report(n):
 
         avgs.append((topics[topic_id], set(topics[topic_id].split(" ")), sites.site_map[site_id], diff, avg))
 
-    avgs = sorted(avgs, key=lambda x: x[2], reverse=True)[:500]
+    avgs = sorted(avgs, key=lambda x: x[4], reverse=True)[:500]
 
     print "Grouping", len(avgs), "items"
 
