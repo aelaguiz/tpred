@@ -68,5 +68,5 @@ def mine(it):
         #print sn.sn, text
         topic_util.update_topics(sites.TWITTER, twm.rel_body, stopwords=stopwords)
 
-        print sn.sn, twm.rel_body.body
+        #print sn.sn, twm.rel_body.body
         db.session.commit()

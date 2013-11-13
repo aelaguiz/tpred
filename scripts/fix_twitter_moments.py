@@ -23,6 +23,6 @@ def fix_topics(topic_ids):
 
     return []
 
-topics = [t[0] for t in db.session.query(models.TopicModel.id).limit(8).all()]
+topics = [t[0] for t in db.session.query(models.TopicModel.id).all()]
 
 mputil.multiproc(topics, 8, fix_topics)
