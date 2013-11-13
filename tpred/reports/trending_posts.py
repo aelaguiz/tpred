@@ -27,6 +27,8 @@ def run_report(minutes, filter_links=False):
         minutes, "AND body NOT LIKE '%http%'" if filter_links else "")
 
     res = db.session.execute(q)
+    db.session.commit()
+
     used = set()
     for site_id, body_id, num_reposts, site_post_id, body, sn, diff, url, pic_url in res:
         if '#forbes30' in body.lower():
