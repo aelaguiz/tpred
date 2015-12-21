@@ -23,6 +23,8 @@ class HnSpider(spider.BaseSpider):
             model_util.set_site_ran(sites.HN)
 
             yield http.Request("https://news.ycombinator.com/newest", meta={'type': 'page', 'num': 1})
+        else:
+            log.debug(u"Not running HN, too soon")
 
     def parse(self, response):
         response_type = response.meta['type']
