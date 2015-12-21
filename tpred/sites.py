@@ -1,6 +1,7 @@
 TWITTER = 1
 HN = 2
 REDDIT = 3
+MEDIUM = 4
 
 #site_array = [TWITTER, REDDIT]
 #site_names = ["twitter", "reddit"]
@@ -8,8 +9,9 @@ REDDIT = 3
 site_map = {
     TWITTER: "twitter",
     HN: "hn",
-    REDDIT: "reddit"
+    REDDIT: "reddit",
+    MEDIUM: "medium"
 }
 
-site_array = [TWITTER, HN, REDDIT]
-site_names = ["twitter", "hn", "reddit"]
+site_array = [TWITTER, HN, REDDIT, MEDIUM]
+site_names = ["twitter", "hn", "reddit", "medium"]
