@@ -4,6 +4,7 @@ import tpred.ducksboard as ducksboard
 
 if __name__ == '__main__':
     data = list(trending_posts.run_report(15, False))[:12]
+    print data
     ducksboard.timeline(data, 237985)
 
     data = list(trending_posts.run_report(60, False))[:12]

@@ -47,10 +47,14 @@ def run_report(minutes, filter_links=False):
         if site_id == 1:
             url = 'https://twitter.com/' + sn + '/status/' + site_post_id
 
-        yield {
+        row = {
             u'title': u"{} - {} - {} - {}".format(sn, num_reposts, diff, site_id),
             u'image': pic_url,
             u'link': url,
             u'content': body
         }
+
+        print row
+
+        yield row
         #yield "{}\n{}".format(title, body)

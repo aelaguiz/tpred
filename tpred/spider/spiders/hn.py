@@ -1,3 +1,4 @@
+import logging
 import scrapy.http as http
 import scrapy.spider as spider
 import scrapy.selector as selector
@@ -7,6 +8,7 @@ import tpred.spider.items as items
 import re
 import tpred.model_util as model_util
 
+log = logging.getLogger(u"tpred")
 
 points_re = re.compile("(\d+) points?")
 post_id_re = re.compile("item\?id=(\d+)")
@@ -34,22 +36,22 @@ class HnSpider(spider.BaseSpider):
 
         hxs = selector.HtmlXPathSelector(response)
 
-        links = hxs.select('//td[@class="title"]/a')
-        subtext = hxs.select('//td[@class="subtext"]')
+        links = hxs.xpath('//td[@class="title"]/a')
+        subtext = hxs.xpath('//td[@class="subtext"]')
 
         for link, td in zip(links, subtext)[:-1]:
-            sn = td.select('./a/text()')[0].extract()
+            sn = td.xpath('./a/text()')[0].extract()
 
-            points_text = td.select('./span/text()')[0].extract()
-            items_href = td.select('./a/@href')[1].extract()
+            points_text = td.xpath('./span/text()')[0].extract()
+            items_href = td.xpath('./a/@href')[1].extract()
             m = points_re.match(points_text)
             points = int(m.group(1))
 
             m = post_id_re.match(items_href)
             post_id = int(m.group(1))
 
-            post = link.select('./text()')[0].extract()
-            content_link = util.get_url_from_node(response, link.select('./@href'))
+            post = link.xpath('./text()')[0].extract()
+            content_link = util.get_url_from_node(response, link.xpath('./@href'))
 
             yield items.PostItem(
                 site_id=sites.HN,
@@ -61,6 +63,6 @@ class HnSpider(spider.BaseSpider):
 
         if num < 5:
             more_link = links[-1]
-            more_url = util.get_url_from_node(response, more_link.select('./@href'))
+            more_url = util.get_url_from_node(response, more_link.xpath('./@href'))
 
             yield http.Request(more_url, meta={'type': 'page', 'num': num + 1})

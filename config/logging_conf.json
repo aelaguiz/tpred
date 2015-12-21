@@ -1,0 +1,72 @@
+{
+    "version": 1,   
+    "root":{
+        "level": "ERROR",
+        "handlers": ["default"]
+    },        
+    "disable_existing_loggers": false,
+    "formatters": {
+        "standard": {
+            "format": "[%(levelname)s][%(name)s] %(filename)s:%(funcName)s()#%(lineno)d:\n\t%(message)s\n"
+        }
+    },
+    "handlers": {
+        "default": {
+            "class":"logging.StreamHandler",
+            "stream": "ext://sys.stdout",
+            "formatter": "standard"
+        }
+    },
+    "loggers": {
+        "tpred": { 
+            "handlers": ["default"],
+            "level": "DEBUG",  
+            "propagate": false
+        },
+        "scrapy": { 
+            "handlers": ["default"],
+            "level": "INFO",  
+            "propagate": false
+        },
+        "proctor": {
+            "handlers": ["default"],
+            "level": "INFO",
+            "propagate": false
+        },
+        "proctor.detector": {
+            "handlers": ["default"],
+            "level": "DEBUG",
+            "propagate": false
+        },
+        "proctor.rectifier": {
+            "handlers": ["default"],
+            "level": "INFO",
+            "propagate": false
+        },
+        "proctor.registry": {
+            "handlers": ["default"],
+            "level": "INFO",
+            "propagate": false
+        },
+        "proctor.condition": {
+            "handlers": ["default"],
+            "level": "INFO",
+            "propagate": false
+        },
+        "proctor.plugin": {
+            "handlers": ["default"],
+            "level": "INFO",
+            "propagate": false
+        },
+        "proctor.meta": {
+            "handlers": ["default"],
+            "level": "DEBUG",
+            "propagate": false
+        },
+        "test": {
+            "handlers": ["default"],
+            "level": "CRITICAL",
+            "propagate": false
+        }
+    }
+}

@@ -1,19 +1,22 @@
 import datetime
+import pprint
+import logging
 import tpred.models as models
 import tpred.db as db
 import tpred.model_util as model_util
 import tpred.topic_util as topic_util
 import sys
 
+log = logging.getLogger(u"tpred")
+
 
 class DatabasePipeline(object):
-    def __init__(self):
-        print "Initializing database pipeline"
-
     def process_item(self, item, spider):
         sn = model_util.get_sn(item['site_id'], item['sn'])  # NOQA
         post = model_util.get_post(item['site_id'], item['body'], datetime.datetime.now(), item['site_post_id'], sn)  # NOQA
         url = model_util.get_url(item['url'])
+
+        log.debug(pprint.pformat(item))
 
         moment = models.PostMomentModel(points=item['points'])
 
@@ -27,8 +30,8 @@ class DatabasePipeline(object):
 
         try:
             db.session.commit()
-        except Exception as e:
-            print e
+        except Exception:
+            log.exception(u"Failed to commit")
             sys.exit(1)
 
         return item

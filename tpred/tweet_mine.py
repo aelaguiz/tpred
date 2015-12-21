@@ -8,10 +8,10 @@ import sites
 
 def mine(it):
     for tweet in it:
-        #print "-----------------"
-        #print ""
-        #print ""
-        #pprint.pprint(tweet)
+        print "-----------------"
+        print ""
+        print ""
+        pprint.pprint(tweet)
 
         if 'delete' in tweet:
             continue
@@ -65,8 +65,8 @@ def mine(it):
 
                 twm.rel_urls.append(urlm)
 
-        #print sn.sn, text
+        print sn.sn, text
         topic_util.update_topics(sites.TWITTER, twm.rel_body, stopwords=stopwords)
 
-        #print sn.sn, twm.rel_body.body
+        print sn.sn, twm.rel_body.body
         db.session.commit()
