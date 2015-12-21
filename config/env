@@ -1,5 +1,3 @@
 DATABASE=postgresql://localhost/tpred
 
-# RDS password
-#sO6tyVPzgMoE
 LOGGING_CONFIG_FILE=config/logging_conf.json
