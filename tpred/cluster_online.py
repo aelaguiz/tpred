@@ -105,10 +105,10 @@ def cluster_topics():
 
 
 if __name__ == '__main__':
-    db.session.execute(models.topic_cluster_map.delete())
-    db.session.commit()
-    db.session.query(models.TopicClusterModel).delete()
-    db.session.commit()
+    #db.session.execute(models.topic_cluster_map.delete())
+    #db.session.commit()
+    #db.session.query(models.TopicClusterModel).delete()
+    #db.session.commit()
 
     try:
         cluster_topics()
