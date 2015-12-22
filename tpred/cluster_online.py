@@ -93,6 +93,10 @@ def cluster_topics():
     while True:
         log.debug(u"Loading topics...")
         topic_rows = db.session.query(models.TopicModel.id, models.TopicModel.topic).filter_by(clustered=False).order_by(models.TopicModel.id.asc()).limit(num_samples).offset(offset).all()
+
+        if not topic_rows:
+            break
+
         log.debug(u"Loaded {} topics".format(len(topic_rows)))
 
         offset += len(topic_rows)
