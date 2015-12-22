@@ -30,7 +30,7 @@ def get_words(titles):
 def vectorspaced(title, words):
     title_components = [normalize_word(word) for word in title.split()]
     return np.array([
-        word in title_components and not word in stopwords
+        word in title_components and word not in stopwords
         for word in words], np.short)
 
 
@@ -89,7 +89,7 @@ def go_cluster(topic_rows):
 
 
 def cluster_topics():
-    num_procs = 1
+    num_procs = 4
     per_proc = 1000
     pool = mputil.get_pool(num_procs)
 
