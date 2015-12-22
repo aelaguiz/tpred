@@ -95,7 +95,7 @@ def cluster_topics():
         topic_rows = db.session.query(models.TopicModel.id, models.TopicModel.topic).filter_by(clustered=False).order_by(models.TopicModel.id.asc()).limit(num_samples).offset(offset).all()
         log.debug(u"Loaded {} topics".format(len(topic_rows)))
 
-        offset += num_samples
+        offset += len(topic_rows)
 
         go_cluster(vectorizer, model, topic_rows)
 
