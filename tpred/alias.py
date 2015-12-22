@@ -8,7 +8,6 @@ import nltk
 import nltk.stem
 import nltk.cluster as cluster
 import nltk.cluster.util as cutil
-import mputil
 
 stemmer_func = nltk.stem.snowball.EnglishStemmer().stem
 stopwords = set(nltk.corpus.stopwords.words('english'))
@@ -89,18 +88,12 @@ def go_cluster(topic_rows):
 
 
 def cluster_topics():
-    num_procs = 4
     per_proc = 1000
-    pool = mputil.get_pool(num_procs)
 
     while True:
-        topic_rows = db.session.query(models.TopicModel.id, models.TopicModel.topic).filter_by(clustered=False).order_by(models.TopicModel.id.asc()).limit(num_procs * per_proc).all()
+        topic_rows = db.session.query(models.TopicModel.id, models.TopicModel.topic).filter_by(clustered=False).order_by(models.TopicModel.id.asc()).limit(per_proc).all()
 
-        if len(topic_rows) < per_proc:
-            go_cluster(topic_rows)
-            break
-        else:
-            mputil.multiproc(topic_rows, num_procs, go_cluster, pool=pool)
+        go_cluster(topic_rows)
 
 
 if __name__ == '__main__':
