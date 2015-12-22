@@ -1,3 +1,4 @@
 DATABASE=postgresql://localhost/tpred
+#DATABASE=postgresql://tpred:sO6tyVPzgMoE@tpred.cupokhnkyihi.us-west-2.rds.amazonaws.com/tpred
 
 LOGGING_CONFIG_FILE=config/logging_conf.json

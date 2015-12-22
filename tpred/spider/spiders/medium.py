@@ -5,13 +5,9 @@ import scrapy.spider as spider
 import tpred.spider.util as util
 import tpred.sites as sites  # NOQA
 import tpred.spider.items as items  # NOQA
-import re
 import tpred.model_util as model_util  # NOQA
 
 log = logging.getLogger(u"tpred")
-
-points_re = re.compile("(\d+) points?")
-post_id_re = re.compile("item\?id=(\d+)")
 
 
 class MediumSpider(spider.BaseSpider):
