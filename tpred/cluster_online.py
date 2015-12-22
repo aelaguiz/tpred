@@ -87,7 +87,7 @@ def cluster_topics():
         stop_words=stopwords
     )
 
-    num_samples = 20000
+    num_samples = 10000
     offset = 0
 
     while True:
