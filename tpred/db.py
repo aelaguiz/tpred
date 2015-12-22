@@ -1,5 +1,6 @@
 import os
 import logging
+import log
 import sqlalchemy as sqla
 import sqlalchemy.orm as orm
 import sqlalchemy.ext.declarative as decl
