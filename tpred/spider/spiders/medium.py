@@ -51,7 +51,7 @@ class MediumSpider(spider.BaseSpider):
             votes = 0
             try:
                 votes_str = thing.xpath('.//button[@data-action="show-recommends"]/text()').extract()[0].strip().replace(",", "")
-                votes = int(votes_str)
+                votes = self.parse_votes(votes_str)
             except:
                 log.exception(u"Exception parsing {}".format(thing))
 
@@ -62,3 +62,15 @@ class MediumSpider(spider.BaseSpider):
                 body=body,
                 sn=author,
                 url=href)
+
+    def parse_votes(self, votes_str):
+        last_char = votes_str[-1]
+
+        if last_char == 'K':
+            votes_str = votes_str[:-1]
+            return int(float(votes_str) * 1000)
+        elif last_char == 'M':
+            votes_str = votes_str[:-1]
+            return int(float(votes_str) * 1000000)
+        
+        return int(votes_str)
