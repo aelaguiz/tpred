@@ -21,7 +21,7 @@ class TumblrSpider(spider.BaseSpider):
     def start_requests(self):
         #yield http.Request("http://www.4chan.org", meta={'type': 'page', 'num': 1})
 
-        for i in range(1):
+        for i in range(20):
             yield http.Request(
                 "https://www.tumblr.com/svc/discover/posts?offset={}&askingForPage={}&limit={}&type=trending&with_form_key=true".format(
                     i * 20, i + 1, 20),
