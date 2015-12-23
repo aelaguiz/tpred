@@ -12,3 +12,6 @@ youtube:
 
 medium:
 	source venv/bin/activate; foreman run scrapy crawl medium
+
+upload_csv:
+	bin/upload_csv.sh
