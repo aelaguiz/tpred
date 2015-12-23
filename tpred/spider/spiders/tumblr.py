@@ -39,16 +39,18 @@ class TumblrSpider(spider.BaseSpider):
                 yield res
 
     def parse_page(self, response):
-        try:
-            data = json.loads(response.body)
+        data = json.loads(response.body)
 
-            discovery_posts = data['response']['DiscoveryPosts']
-            posts = discovery_posts['posts']
+        discovery_posts = data['response']['DiscoveryPosts']
+        posts = discovery_posts['posts']
 
-            for post in posts:
+        for post in posts:
+            try:
                 hxs = scrapy.Selector(text=post)
 
-                entry = hxs.xpath('//article')
+                entry = hxs.xpath('//article[@data-id]')
+                if not entry:
+                    continue
 
                 post_id = entry.xpath('./@data-id').extract()[0].strip()
                 #log.debug(post_id)
@@ -70,7 +72,8 @@ class TumblrSpider(spider.BaseSpider):
                 body_text = " ".join(parser.unescape(body))
                 #log.debug(body_text)
 
-                votes = int(entry.xpath('.//div[@class="post_notes_inner"]//span[@class="note_link_current"]/@data-count').extract()[0].strip())
+                notes_str = entry.xpath('.//div[@class="post_notes_inner"]//span[@class="note_link_current"]/@data-count').extract()[0].strip()
+                votes = self.parse_notes(notes_str)
                 #log.debug(votes)
 
                 yield items.PostItem(
@@ -81,5 +84,18 @@ class TumblrSpider(spider.BaseSpider):
                     sn=author,
                     url=href
                 )
-        except:
-            log.exception(u"Failed")
+            except:
+                log.exception(u"Failed")
+                log.debug(post)
+
+    def parse_notes(self, notes_str):
+        last_char = notes_str[-1]
+
+        if last_char == 'K':
+            notes_str = notes_str[:-1]
+            return int(notes_str) * 1000
+        elif last_char == 'M':
+            notes_str = notes_str[:-1]
+            return int(notes_str) * 1000000
+        
+        return int(notes_str)
